@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spit Happens</title>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Spit Happens">
+  <meta name="theme-color" content="#0d1210">
+  <style>
+    :root {
+      --bg: #0d1210;
+      --bg-soft: #101813;
+      --card: rgba(24, 33, 28, 0.88);
+      --card-2: rgba(18, 27, 22, 0.92);
+      --border: rgba(167, 211, 174, 0.16);
+      --accent: #5e9b69;
+      --accent-soft: #a7d3ae;
+      --text: #f1f7f2;
+      --muted: #98a59a;
+      --danger: #e0a6a6;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.36);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(94, 155, 105, 0.22), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(167, 211, 174, 0.10), transparent 28rem),
+        var(--bg);
+      color: var(--text);
+      padding: 24px;
+    }
+    .app { width: min(1120px, 100%); margin: 0 auto; }
+    header {
+      display: flex; justify-content: space-between; gap: 18px; align-items: center;
+      margin-bottom: 22px; padding: 24px; border: 1px solid var(--border);
+      border-radius: 32px; background: linear-gradient(135deg, rgba(24, 33, 28, 0.94), rgba(13, 18, 16, 0.72));
+      box-shadow: var(--shadow); backdrop-filter: blur(16px);
+    }
+    .brand { display: flex; gap: 16px; align-items: center; }
+    .logo { width: 56px; height: 56px; border-radius: 18px; overflow: hidden; border: 1px solid rgba(167, 211, 174, 0.22); background: rgba(167, 211, 174, 0.10); }
+    .logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    h1 { margin: 0; font-size: clamp(30px, 5vw, 48px); letter-spacing: -0.06em; }
+    .subtitle { margin-top: 6px; color: var(--muted); font-size: 15px; }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    button, .file-label {
+      border: 0; color: var(--text); background: rgba(94, 155, 105, 0.20);
+      border: 1px solid rgba(167, 211, 174, 0.20); padding: 12px 16px; border-radius: 999px;
+      cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px; transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+    }
+    button:hover, .file-label:hover { transform: translateY(-1px); background: rgba(94, 155, 105, 0.28); border-color: rgba(167, 211, 174, 0.34); }
+    button.primary { background: linear-gradient(135deg, var(--accent), #3f7448); box-shadow: 0 12px 30px rgba(94, 155, 105, 0.20); }
+    button.ghost { background: rgba(255,255,255,0.04); }
+    button.danger { background: rgba(224, 166, 166, 0.12); border-color: rgba(224, 166, 166, 0.26); color: #ffd8d8; }
+    input[type="file"] { display: none; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+    .stat { padding: 16px; background: rgba(24, 33, 28, 0.70); border: 1px solid var(--border); border-radius: 20px; }
+    .stat .num { font-size: 26px; font-weight: 900; color: var(--accent-soft); letter-spacing: -0.04em; }
+    .stat .label { margin-top: 4px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .tabs { display:flex; gap: 10px; flex-wrap: wrap; margin: 0 0 22px; }
+    .tab-btn.active { background: linear-gradient(135deg, var(--accent), #3f7448); border-color: rgba(167, 211, 174, 0.36); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; animation: fadeIn .18s ease; }
+    .grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 22px; align-items: start; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); backdrop-filter: blur(16px); overflow: hidden; }
+    .card-inner { padding: 22px; }
+    .card h2 { margin: 0 0 14px; font-size: 22px; letter-spacing: -0.03em; display:flex; align-items:center; gap:10px; }
+    .section-title { color: var(--accent-soft); font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 800; margin: 22px 0 10px; }
+    .field { margin-bottom: 14px; position: relative; }
+    label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 13px; font-weight: 700; }
+    input, select, textarea { width: 100%; border: 1px solid rgba(167, 211, 174, 0.16); background: rgba(9, 14, 11, 0.56); color: var(--text); border-radius: 16px; padding: 13px 14px; font-size: 15px; outline: none; }
+    textarea { min-height: 88px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: rgba(167, 211, 174, 0.48); box-shadow: 0 0 0 4px rgba(94, 155, 105, 0.10); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .size-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .quick-add { display:none; position:absolute; z-index:10; top: calc(100% + 8px); left:0; right:0; background:#111a14; border:1px solid rgba(167, 211, 174, 0.18); border-radius:18px; box-shadow:var(--shadow); padding:10px; }
+    .quick-add.show { display:block; }
+    .quick-title { color: var(--muted); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; margin: 4px 6px 8px; }
+    .quick-chip { width:100%; justify-content:flex-start; border-radius:14px; padding:10px 12px; margin:3px 0; background:rgba(255,255,255,.035); }
+    .searchbar { display:flex; gap:10px; margin-bottom: 14px; }
+    .searchbar input { flex: 1; }
+    .episode { padding: 18px; border: 1px solid rgba(167, 211, 174, 0.14); border-radius: 22px; background: var(--card-2); margin-bottom: 12px; animation: fadeIn .18s ease; }
+    .episode-head { display:flex; justify-content:space-between; gap: 12px; align-items:flex-start; }
+    .food { font-size: 19px; font-weight: 900; letter-spacing: -0.03em; }
+    .pill { color: var(--accent-soft); background: rgba(167, 211, 174, 0.08); border: 1px solid rgba(167, 211, 174, 0.16); padding: 7px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .details { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+    .detail { padding: 12px; border-radius: 16px; background: rgba(255,255,255,0.035); }
+    .detail span { display:block; color: var(--muted); font-size: 12px; font-weight: 800; margin-bottom: 4px; }
+    .detail strong { font-size: 14px; }
+    .notes { margin-top: 12px; color: #d9e8dc; line-height: 1.45; font-size: 14px; }
+    .episode-actions { margin-top: 12px; display:flex; gap: 8px; justify-content:flex-end; }
+    .episode-actions button { padding: 9px 12px; font-size: 12px; }
+    .rank-row { padding:16px; background:var(--card-2); border:1px solid rgba(167,211,174,.14); border-radius:18px; display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px; cursor:pointer; }
+    .rank-row:hover { border-color: rgba(167,211,174,.32); background: rgba(23, 37, 29, 0.92); }
+    .rank-food { font-weight:900; font-size:17px; }
+    .food-page { margin-top:16px; }
+    .food-page-head { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:14px; }
+    .mini-stats { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:14px; }
+    .mini-stat { background:rgba(255,255,255,.035); border:1px solid rgba(167,211,174,.14); border-radius:16px; padding:12px; }
+    .mini-stat strong { display:block; color:var(--accent-soft); font-size:19px; }
+    .mini-stat span { color:var(--muted); font-size:12px; font-weight:800; }
+    .empty { color: var(--muted); text-align:center; padding: 36px 20px; border: 1px dashed rgba(167, 211, 174, 0.18); border-radius: 22px; background: rgba(255,255,255,0.025); }
+    .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(20px); background: #142019; border: 1px solid rgba(167, 211, 174, 0.24); color: var(--text); padding: 13px 16px; border-radius: 999px; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: all .22s ease; font-weight: 800; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(4px); } to { opacity:1; transform: none; } }
+    @media (max-width: 850px) {
+      body { padding: 14px; }
+      header { flex-direction: column; align-items: stretch; border-radius: 24px; }
+      .toolbar { justify-content: stretch; }
+      .toolbar button, .toolbar .file-label { flex: 1; }
+      .stats, .grid, .row, .details, .size-grid, .mini-stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"><img src="apple-touch-icon.png" alt=""></div>
+        <div><h1>Spit Happens</h1><div class="subtitle">Track patterns. Find triggers. Keep it simple.</div></div>
+      </div>
+      <div class="toolbar">
+        <button class="ghost" id="exportBtn"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>Export CSV</button>
+        <label class="file-label"><svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="m7 8 5-5 5 5"></path><path d="M5 21h14"></path></svg>Import<input type="file" id="importFile" accept=".json" /></label>
+      </div>
+    </header>
+
+    <div class="stats">
+      <div class="stat"><div class="num" id="totalEpisodes">0</div><div class="label">Episodes Logged</div></div>
+      <div class="stat"><div class="num" id="lastEpisode">—</div><div class="label">Last Episode</div></div>
+      <div class="stat"><div class="num" id="commonFood">—</div><div class="label">Most Logged Food</div></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="logPanel">Log</button>
+      <button class="tab-btn" data-tab="episodesPanel">Episodes</button>
+      <button class="tab-btn" data-tab="totalsPanel">Totals</button>
+    </div>
+
+    <section id="logPanel" class="tab-panel active">
+      <main class="grid">
+        <section class="card"><div class="card-inner">
+          <h2><svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>New Episode</h2>
+          <form id="episodeForm">
+            <div class="section-title">Food</div>
+            <div class="field">
+              <label for="food">What did you eat?</label>
+              <input id="food" autocomplete="off" required placeholder="ex. pasta, coffee, ice cream" />
+              <div id="quickAdd" class="quick-add"></div>
+            </div>
+            <div class="field">
+              <label for="amountEaten">Amount eaten</label>
+              <select id="amountEaten" required>
+                <option value="Tiny">Tiny</option>
+                <option value="Small">Small</option>
+                <option value="Normal" selected>Normal</option>
+                <option value="Large">Large</option>
+                <option value="Huge">Huge</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="field"><label for="eatDate">Date eaten</label><input type="date" id="eatDate" required /></div>
+              <div class="field"><label for="eatTime">Time eaten</label><input type="time" id="eatTime" required /></div>
+            </div>
+            <div class="section-title">Vomiting Episode</div>
+            <div class="row">
+              <div class="field"><label for="vomitDate">Date vomited</label><input type="date" id="vomitDate" required /></div>
+              <div class="field"><label for="vomitTime">Time vomited</label><input type="time" id="vomitTime" required /></div>
+            </div>
+            <div class="field"><label for="times">How many times did you throw up?</label><input type="number" id="times" min="1" value="1" required /></div>
+            <div class="field"><label>Vomiting size</label><div id="sizeFields" class="size-grid"></div></div>
+            <div class="field"><label for="notes">Notes (optional)</label><textarea id="notes" placeholder="ex. nausea before, stomach pain, outside food, etc."></textarea></div>
+            <button class="primary" type="submit"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg>Save Episode</button>
+          </form>
+        </div></section>
+
+        <section class="card"><div class="card-inner">
+          <h2><svg viewBox="0 0 24 24"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg>History</h2>
+          <div class="searchbar"><input id="search" placeholder="Search food or notes..." /><button class="ghost" id="clearSearch" type="button"><svg viewBox="0 0 24 24"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+          <div id="episodes"></div>
+        </div></section>
+      </main>
+    </section>
+
+    <section id="episodesPanel" class="tab-panel">
+      <section class="card"><div class="card-inner"><h2>Episodes</h2><div id="episodeRankings"></div><div id="episodeFoodPage" class="food-page"></div></div></section>
+    </section>
+
+    <section id="totalsPanel" class="tab-panel">
+      <section class="card"><div class="card-inner"><h2>Totals</h2><div id="vomitTotals"></div><div id="totalFoodPage" class="food-page"></div></div></section>
+    </section>
+  </div>
+
+  <div class="toast" id="toast">Episode saved</div>
+
+  <script>
+    const STORAGE_KEY = "spit_happens_episodes_v1";
+    let episodes = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    let editingId = null;
+    let selectedFoodKey = null;
+    const $ = (id) => document.getElementById(id);
+
+    function pad(n) { return String(n).padStart(2, "0"); }
+    function todayParts() { const d = new Date(); return { date: `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`, time: `${pad(d.getHours())}:${pad(d.getMinutes())}` }; }
+    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(episodes)); }
+    function dt(date, time) { return new Date(`${date}T${time}`); }
+    function fmt(date, time) { if (!date || !time) return "—"; return dt(date, time).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); }
+    function delayMinutes(e) { return Math.round((dt(e.vomitDate, e.vomitTime) - dt(e.eatDate, e.eatTime)) / 60000); }
+    function delayText(e) { const mins = delayMinutes(e); if (!Number.isFinite(mins)) return "—"; const sign = mins < 0 ? "before eating by " : ""; const abs = Math.abs(mins); const h = Math.floor(abs / 60), m = abs % 60; return sign + (h ? `${h}h ${m}m` : `${m}m`); }
+    function titleCase(str) { return String(str).replace(/\b\w/g, c => c.toUpperCase()); }
+    function foodKey(food) { return String(food || "").trim().toLowerCase(); }
+    function plural(n, one, many) { return Number(n) === 1 ? one : many; }
+    function escapeHtml(str) { return String(str).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+    function showToast(text) { $("toast").textContent = text; $("toast").classList.add("show"); setTimeout(() => $("toast").classList.remove("show"), 1700); }
+    function icon(name) { const icons = { trash: '<svg viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M19 6l-1 14H6L5 6"></path></svg>', edit: '<svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>' }; return icons[name] || ""; }
+
+    function normalizeEpisode(e) {
+      const times = Math.max(1, parseInt(e.times || 1, 10) || 1);
+      if (!Array.isArray(e.sizes) || !e.sizes.length) e.sizes = Array(times).fill(e.amount || "Small");
+      while (e.sizes.length < times) e.sizes.push(e.sizes[e.sizes.length - 1] || "Small");
+      e.sizes = e.sizes.slice(0, times);
+      e.times = String(times);
+      if (!e.amountEaten) e.amountEaten = "Normal";
+      return e;
+    }
+    episodes = episodes.map(normalizeEpisode); save();
+
+    function buildFoodStats() {
+      const stats = {};
+      episodes.forEach(e => {
+        const key = foodKey(e.food); if (!key) return;
+        if (!stats[key]) stats[key] = { key, food: titleCase(key), episodes: 0, totalVomits: 0, entries: [] };
+        stats[key].episodes += 1;
+        stats[key].totalVomits += Math.max(1, parseInt(e.times || 1, 10) || 1);
+        stats[key].entries.push(e);
+      });
+      return Object.values(stats);
+    }
+
+    function renderStats() {
+      $("totalEpisodes").textContent = episodes.length;
+      if (!episodes.length) { $("lastEpisode").textContent = "—"; $("commonFood").textContent = "—"; return; }
+      const sorted = [...episodes].sort((a,b) => dt(b.vomitDate,b.vomitTime) - dt(a.vomitDate,a.vomitTime));
+      const last = sorted[0];
+      const diffDays = Math.floor((new Date() - dt(last.vomitDate, last.vomitTime)) / 86400000);
+      $("lastEpisode").textContent = diffDays === 0 ? "Today" : diffDays === 1 ? "1 day" : `${diffDays} days`;
+      const top = buildFoodStats().sort((a,b)=>b.episodes-a.episodes || b.totalVomits-a.totalVomits)[0];
+      $("commonFood").textContent = top ? top.food : "—";
+    }
+
+    function renderSizeFields(values = []) {
+      const count = Math.max(1, parseInt($("times").value || 1, 10) || 1);
+      $("sizeFields").innerHTML = Array.from({ length: count }, (_, i) => `
+        <div class="field"><label for="size${i}">${count === 1 ? "Size" : `Throw up #${i + 1}`}</label>
+          <select class="sizeSelect" id="size${i}" required>${["Small", "Medium", "Large", "Extreme"].map(v => `<option value="${v}" ${values[i] === v ? "selected" : ""}>${v}</option>`).join("")}</select>
+        </div>`).join("");
+    }
+
+    function renderRankings() {
+      const episodeStats = buildFoodStats().sort((a,b)=>b.episodes-a.episodes || a.food.localeCompare(b.food));
+      $("episodeRankings").innerHTML = episodeStats.length ? episodeStats.map(item => `<div class="rank-row" onclick="openFoodPage('${item.key}', 'episode')"><div class="rank-food">${escapeHtml(item.food)}</div><div class="pill">${item.episodes} ${plural(item.episodes, "episode", "episodes")}</div></div>`).join("") : `<div class="empty">No episodes yet.</div>`;
+
+      const totalStats = buildFoodStats().sort((a,b)=>b.totalVomits-a.totalVomits || a.food.localeCompare(b.food));
+      $("vomitTotals").innerHTML = totalStats.length ? totalStats.map(item => `<div class="rank-row" onclick="openFoodPage('${item.key}', 'total')"><div class="rank-food">${escapeHtml(item.food)}</div><div class="pill">${item.totalVomits} ${plural(item.totalVomits, "vomiting", "vomitings")}</div></div>`).join("") : `<div class="empty">No totals yet.</div>`;
+
+      if (selectedFoodKey) renderFoodPage(selectedFoodKey);
+    }
+
+    window.openFoodPage = function(key, source) { selectedFoodKey = key; renderFoodPage(key); }
+
+    function renderFoodPage(key) {
+      const stat = buildFoodStats().find(s => s.key === key);
+      if (!stat) { $("episodeFoodPage").innerHTML = ""; $("totalFoodPage").innerHTML = ""; return; }
+      const entries = [...stat.entries].sort((a,b) => dt(b.vomitDate,b.vomitTime) - dt(a.vomitDate,a.vomitTime));
+      const validDelays = entries.map(delayMinutes).filter(n => Number.isFinite(n) && n >= 0);
+      const avgDelay = validDelays.length ? Math.round(validDelays.reduce((a,b)=>a+b,0)/validDelays.length) : null;
+      const avgDelayText = avgDelay === null ? "—" : (Math.floor(avgDelay/60) ? `${Math.floor(avgDelay/60)}h ${avgDelay%60}m` : `${avgDelay}m`);
+      const last = entries[0];
+      const amounts = { Tiny:0, Small:0, Normal:0, Large:0, Huge:0 };
+      entries.forEach(e => { amounts[e.amountEaten] = (amounts[e.amountEaten] || 0) + 1; });
+      const amountRows = Object.entries(amounts).map(([name, count]) => `<div class="detail"><span>${escapeHtml(name)}</span><strong>${count}</strong></div>`).join("");
+      const historyRows = entries.map(e => `<article class="episode"><div class="episode-head"><div><div class="food">${fmt(e.vomitDate, e.vomitTime)}</div><div class="subtitle">Ate ${fmt(e.eatDate, e.eatTime)} • ${escapeHtml(e.amountEaten || "Normal")}</div></div><div class="pill">${e.times} ${plural(e.times, "vomit", "vomits")}</div></div><div class="notes">Sizes: ${escapeHtml((e.sizes || []).join(", "))}${e.notes ? `<br>${escapeHtml(e.notes)}` : ""}</div></article>`).join("");
+      const html = `<section class="card food-page"><div class="card-inner"><div class="food-page-head"><h2>${escapeHtml(stat.food)}</h2><button class="ghost" onclick="closeFoodPage()">Close</button></div><div class="mini-stats"><div class="mini-stat"><strong>${stat.episodes}</strong><span>Episodes</span></div><div class="mini-stat"><strong>${stat.totalVomits}</strong><span>Total vomits</span></div><div class="mini-stat"><strong>${avgDelayText}</strong><span>Average delay</span></div><div class="mini-stat"><strong>${last ? fmt(last.vomitDate, last.vomitTime) : "—"}</strong><span>Last episode</span></div></div><div class="section-title">Amount eaten</div><div class="details">${amountRows}</div><div class="section-title">Episode history</div>${historyRows}</div></section>`;
+      $("episodeFoodPage").innerHTML = html;
+      $("totalFoodPage").innerHTML = html;
+    }
+    window.closeFoodPage = function() { selectedFoodKey = null; $("episodeFoodPage").innerHTML = ""; $("totalFoodPage").innerHTML = ""; }
+
+    function renderHistory() {
+      const q = $("search").value.toLowerCase().trim();
+      const list = [...episodes].sort((a,b) => dt(b.vomitDate,b.vomitTime) - dt(a.vomitDate,a.vomitTime)).filter(e => !q || `${e.food} ${e.amountEaten || ""} ${e.notes || ""}`.toLowerCase().includes(q));
+      const wrap = $("episodes");
+      if (!list.length) { wrap.innerHTML = `<div class="empty">No episodes found. Add one on the left and it will stay saved here.</div>`; return; }
+      wrap.innerHTML = list.map(e => {
+        const sizes = Array.isArray(e.sizes) ? e.sizes : [e.amount || "Small"];
+        return `<article class="episode"><div class="episode-head"><div><div class="food">${escapeHtml(e.food)}</div><div class="subtitle">Logged ${fmt(e.createdDate, e.createdTime)}</div></div><div class="pill">${delayText(e)}</div></div><div class="details"><div class="detail"><span>Ate</span><strong>${fmt(e.eatDate, e.eatTime)}</strong></div><div class="detail"><span>Amount eaten</span><strong>${escapeHtml(e.amountEaten || "Normal")}</strong></div><div class="detail"><span>Vomited</span><strong>${fmt(e.vomitDate, e.vomitTime)}</strong></div><div class="detail"><span>Times</span><strong>${escapeHtml(String(e.times))}</strong></div><div class="detail"><span>Sizes</span><strong>${escapeHtml(sizes.join(", "))}</strong></div></div>${e.notes ? `<div class="notes">${escapeHtml(e.notes)}</div>` : ""}<div class="episode-actions"><button class="ghost" onclick="editEpisode('${e.id}')">${icon('edit')}Edit</button><button class="danger" onclick="deleteEpisode('${e.id}')">${icon('trash')}Delete</button></div></article>`;
+      }).join("");
+    }
+
+    function render() { renderStats(); renderRankings(); renderHistory(); renderQuickAdd(); }
+
+    function recentFoods() {
+      const seen = new Set();
+      return [...episodes].sort((a,b)=>dt(b.createdDate,b.createdTime)-dt(a.createdDate,a.createdTime)).map(e => titleCase(foodKey(e.food))).filter(f => f && !seen.has(f.toLowerCase()) && seen.add(f.toLowerCase())).slice(0, 8);
+    }
+    function renderQuickAdd() {
+      const box = $("quickAdd");
+      const q = $("food").value.trim().toLowerCase();
+      const foods = recentFoods().filter(f => !q || f.toLowerCase().includes(q)).slice(0, 6);
+      if (!foods.length) { box.classList.remove("show"); box.innerHTML = ""; return; }
+      box.innerHTML = `<div class="quick-title">${q ? "Suggestions" : "Recent foods"}</div>` + foods.map(f => `<button type="button" class="quick-chip" onclick="chooseFood('${escapeHtml(f)}')">${escapeHtml(f)}</button>`).join("");
+      if (document.activeElement === $("food")) box.classList.add("show");
+    }
+    window.chooseFood = function(food) { $("food").value = food; $("quickAdd").classList.remove("show"); }
+
+    window.deleteEpisode = function(id) { if (!confirm("Delete this episode?")) return; episodes = episodes.filter(e => e.id !== id); save(); render(); showToast("Episode deleted"); }
+    window.editEpisode = function(id) {
+      const e = episodes.find(x => x.id === id); if (!e) return; normalizeEpisode(e);
+      editingId = id;
+      $("food").value = e.food; $("amountEaten").value = e.amountEaten || "Normal"; $("eatDate").value = e.eatDate; $("eatTime").value = e.eatTime; $("vomitDate").value = e.vomitDate; $("vomitTime").value = e.vomitTime; $("times").value = e.times; renderSizeFields(e.sizes); $("notes").value = e.notes || "";
+      document.querySelector("button.primary").innerHTML = '<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg>Update Episode';
+      activateTab("logPanel"); window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    $("episodeForm").addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      const now = todayParts();
+      const sizeValues = [...document.querySelectorAll(".sizeSelect")].map(s => s.value);
+      const existing = editingId ? episodes.find(e => e.id === editingId) : null;
+      const data = { id: editingId || crypto.randomUUID(), food: $("food").value.trim(), amountEaten: $("amountEaten").value, eatDate: $("eatDate").value, eatTime: $("eatTime").value, vomitDate: $("vomitDate").value, vomitTime: $("vomitTime").value, times: $("times").value, sizes: sizeValues, notes: $("notes").value.trim(), createdDate: existing?.createdDate || now.date, createdTime: existing?.createdTime || now.time };
+      if (editingId) episodes = episodes.map(e => e.id === editingId ? data : e); else episodes.push(data);
+      save(); ev.target.reset(); setDefaults(); editingId = null;
+      document.querySelector("button.primary").innerHTML = '<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg>Save Episode';
+      render(); showToast("Episode saved");
+    });
+
+    function activateTab(id) {
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === id));
+      document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.toggle("active", panel.id === id));
+    }
+    document.querySelectorAll(".tab-btn").forEach(btn => btn.addEventListener("click", () => activateTab(btn.dataset.tab)));
+    $("times").addEventListener("input", () => renderSizeFields([...document.querySelectorAll(".sizeSelect")].map(s => s.value)));
+    $("food").addEventListener("focus", renderQuickAdd);
+    $("food").addEventListener("input", renderQuickAdd);
+    document.addEventListener("click", (e) => { if (!$("food").contains(e.target) && !$("quickAdd").contains(e.target)) $("quickAdd").classList.remove("show"); });
+    $("search").addEventListener("input", renderHistory);
+    $("clearSearch").addEventListener("click", () => { $("search").value = ""; renderHistory(); });
+
+    $("exportBtn").addEventListener("click", () => {
+      const rows = [["Food", "Amount Eaten", "Date Eaten", "Time Eaten", "Date Vomited", "Time Vomited", "Delay", "Total Vomits", "Sizes", "Notes"]];
+      episodes.forEach(e => rows.push([e.food, e.amountEaten || "Normal", e.eatDate, e.eatTime, e.vomitDate, e.vomitTime, delayText(e), e.times, (e.sizes || [e.amount || ""]).join("; "), e.notes || ""]));
+      const csv = rows.map(r => r.map(v => `"${String(v).replaceAll('"','""')}"`).join(",")).join("\n");
+      download(new Blob([csv], { type: "text/csv" }), "spit-happens-export.csv");
+      download(new Blob([JSON.stringify(episodes, null, 2)], { type: "application/json" }), "spit-happens-backup.json");
+    });
+    $("importFile").addEventListener("change", async (ev) => {
+      const file = ev.target.files[0]; if (!file) return; const text = await file.text();
+      try { const data = JSON.parse(text); if (Array.isArray(data)) { episodes = data.map(normalizeEpisode); save(); render(); showToast("Imported data"); return; } } catch {}
+      alert("Import works with the JSON backup from this app.");
+    });
+    function download(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.click(); URL.revokeObjectURL(a.href); }
+    function setDefaults() { const now = todayParts(); ["eatDate", "vomitDate"].forEach(id => $(id).value = now.date); $("eatTime").value = now.time; $("vomitTime").value = now.time; $("times").value = 1; $("amountEaten").value = "Normal"; renderSizeFields(); }
+    setDefaults(); render();
+  </script>
+</body>
+</html>
